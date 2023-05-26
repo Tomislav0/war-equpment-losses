@@ -1,0 +1,41 @@
+<h2 style="color: white;
+text-align: center;
+text-shadow: 2px 2px black;">Equipment lost during time</h2>
+<div style="    display: flex;
+margin: 0 auto;
+align-items: center;
+width: fit-content;">
+  <dx-drop-down-box style="width: 200px;" [(value)]="gridBoxValue" [(opened)]="isGridBoxOpened" [displayExpr]="'name'"
+    [deferRendering]="false" placeholder="Aircrafts" [dataSource]="searchData"
+    (onOptionChanged)="onGridBoxOptionChanged($event)">
+    <div *dxTemplate="let data of 'content'">
+      <dx-data-grid [dataSource]="searchData" [columns]="gridColumns" [hoverStateEnabled]="true"
+        [(selectedRowKeys)]="gridBoxValue" height="100%">
+        <dxo-selection mode="single"></dxo-selection>
+        <dxo-filter-row [visible]="true"></dxo-filter-row>
+        <dxo-scrolling mode="virtual"></dxo-scrolling>
+        <dxo-paging [enabled]="true" [pageSize]="10"></dxo-paging>
+      </dx-data-grid>
+    </div>
+  </dx-drop-down-box>
+  <div class="dx-field checkbox">
+    Show info dots
+    <dx-check-box [(value)]="showDots" (onValueChanged)="onValueChanged()"></dx-check-box>
+  </div>
+  <dx-drop-down-box style="width: 200px;" [(value)]="filterGridBoxValue" [(opened)]="isFilterGridBoxOpened" [displayExpr]="'name'"
+  [deferRendering]="false" placeholder="First 3 months" [dataSource]="filterData"
+  (onOptionChanged)="onFilterGridBoxOptionChanged($event)">
+  <div *dxTemplate="let data of 'content'">
+    <dx-data-grid [dataSource]="filterData" [columns]="gridColumns" [hoverStateEnabled]="true"
+      [(selectedRowKeys)]="filterGridBoxValue" height="100%">
+      <dxo-selection mode="single"></dxo-selection>
+      <dxo-filter-row [visible]="true"></dxo-filter-row>
+      <dxo-scrolling mode="virtual"></dxo-scrolling>
+      <dxo-paging [enabled]="true" [pageSize]="10"></dxo-paging>
+    </dx-data-grid>
+  </div>
+</dx-drop-down-box>
+</div>
+<figure id="bar" style="    margin-left: 170px !important; " >
+
+</figure>
