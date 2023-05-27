@@ -1,27 +1,16 @@
-# WarEquipmentLosses
+# War Equipment Losses
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.2.4.
+Link of app: https://war-equipment-losses.onrender.com/
 
-## Development server
+## Context of app:
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+Main goal of this project is to visualize data using d3 library.
+    
+Visualization of the loss of Russian military equipment in the war attack on Ukraine. The data set
+      was collected in the period from February 25, 2022. April 30, 2023.
+The project consists of 2 graphs:
+      The first, line display of equipment loss with options for equipment selection and time period selection.
+      The second, columnar display of equipment losses per day with the aim of comparing the loss of individual
+      equipment.
 
-## Code scaffolding
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
-
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
-
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+Dataset link: <a target="_blank" style="color: #acacea;" href="https://www.kaggle.com/datasets/piterfm/2022-ukraine-russian-war?select=russia_losses_equipment.csv">2022-ukraine-russian-war</a>
