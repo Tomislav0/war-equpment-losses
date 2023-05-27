@@ -1,6 +1,6 @@
 # War Equipment Losses
 
-Link of app: https://war-equipment-losses.onrender.com/
+Link of app:<a target="_blank" style="color: #acacea;" href="https://war-equipment-losses.onrender.com/">https://war-equipment-losses.onrender.com/</a> 
 
 ## Context of app:
 
