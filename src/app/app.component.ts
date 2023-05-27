@@ -16,7 +16,7 @@ export class AppComponent {
   isClicked = false;
   data: DayLoss[]
 
-  countinueClicked() {
+  continueClicked() {
     this.isClicked = !this.isClicked;
   }
 }
