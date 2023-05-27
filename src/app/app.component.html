@@ -1,3 +1,30 @@
-<h1 class="title">Russian army equipment losses in ukraine war</h1>
+<div style="text-align:  right !important; padding: 10px;">
+  <dx-button style="color:white" stylingMode="outlined" text="Show info" type="normal" [width]="120"
+    (onClick)="countinueClicked()"></dx-button>
+</div>
+<div class="visualzation" [ngClass]="{'show':isClicked}">
 
-<app-line-chart></app-line-chart>
+  <h1 class="title">Russian army equipment losses in ukraine war</h1>
+  <app-line-chart [data]="data"></app-line-chart>
+  <app-bar-chart [data]="data"></app-bar-chart>
+</div>
+
+<div id="overlay" *ngIf="!isClicked">
+  <div id="content">
+    <h1>2022 Russia Ukraine War</h1>
+    <p class="ptext">Visualization of the loss of Russian military equipment in the war attack on Ukraine. The data set
+      was collected in the period from February 25, 2022. April 30, 2023.</p>
+    <p class="ptext">The project consists of 2 graphs:
+      The first, line display of equipment loss with options for equipment selection and time period selection.
+      The second, columnar display of equipment losses per day with the aim of comparing the loss of individual
+      equipment.</p>
+
+    <p class="ptext">Dataset link: <a target="_blank" style="color: #acacea;"
+        href="https://www.kaggle.com/datasets/piterfm/2022-ukraine-russian-war?select=russia_losses_equipment.csv">2022-ukraine-russian-war</a>
+    </p>
+
+    <p class="ptext">Github repository link: <a target="_blank" style="color: #acacea;"
+        href="https://github.com/Tomislav0/war-equpment-losses">war-equpment-losses</a></p>
+    <dx-button style="background-color: #C29128" class="continueButon" type="default" (click)="countinueClicked()">Continue</dx-button>
+  </div>
+</div>

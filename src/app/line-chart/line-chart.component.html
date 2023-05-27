@@ -1,0 +1,42 @@
+<h2 class="chartTitle">Equipment lost during time</h2>
+<div class="dropdd">
+<div class="field">
+  <label class="fieldlabel">Equipment: </label>
+  <dx-drop-down-box style="width: 200px;" [(value)]="selectedEqupment" [(opened)]="isEquipmentDropdownOpen" [displayExpr]="'name'"
+    [deferRendering]="false" placeholder="Aircrafts" [dataSource]="searchDataSource"
+    (onOptionChanged)="onEquipmentOptionChange($event)">
+    <div *dxTemplate="let data of 'content'">
+      <dx-data-grid [dataSource]="searchDataSource" [columns]="gridColumns" [hoverStateEnabled]="true"
+        [(selectedRowKeys)]="selectedEqupment" height="100%">
+        <dxo-selection mode="single"></dxo-selection>
+        <dxo-filter-row [visible]="true"></dxo-filter-row>
+        <dxo-scrolling mode="virtual"></dxo-scrolling>
+        <dxo-paging [enabled]="true" [pageSize]="10"></dxo-paging>
+      </dx-data-grid>
+    </div>
+  </dx-drop-down-box>
+  </div>
+  <div class="dx-field checkbox">
+    Show info dots
+    <dx-check-box [(value)]="showDots" (onValueChanged)="toggleShowDots()"></dx-check-box>
+  </div>
+  <div class="field">
+    <label class="fieldlabel">Time period: </label>
+  <dx-drop-down-box style="width: 200px;" [(value)]="selectedTimePeriod" [(opened)]="isTimePeriodDropdownOpen" [displayExpr]="'name'"
+  [deferRendering]="false" placeholder="First 3 months" [dataSource]="filterDataSource"
+  (onOptionChanged)="onTimePeriodOptionChanged($event)">
+  <div *dxTemplate="let data of 'content'">
+    <dx-data-grid [dataSource]="filterDataSource" [columns]="gridColumns" [hoverStateEnabled]="true"
+      [(selectedRowKeys)]="selectedTimePeriod" height="100%">
+      <dxo-selection mode="single"></dxo-selection>
+      <dxo-filter-row [visible]="true"></dxo-filter-row>
+      <dxo-scrolling mode="virtual"></dxo-scrolling>
+      <dxo-paging [enabled]="true" [pageSize]="10"></dxo-paging>
+    </dx-data-grid>
+  </div>
+</dx-drop-down-box>
+</div>
+</div>
+<figure id="line" style="    margin-left: 170px !important; " >
+
+</figure>

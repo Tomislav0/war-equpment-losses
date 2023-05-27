@@ -1,0 +1,26 @@
+<h2 class="chartTitle">Comparison of lost equipment up to the observed day</h2>
+
+<div class="dropd">
+  <div class="field">
+    <label class="fieldlabel">Equipment: </label>
+    <dx-drop-down-box style="width: 600px;" [(value)]="selectedValues" [displayExpr]="'name'" [deferRendering]="false"
+      placeholder="Select please..." [dataSource]="selectDataSource" (onOptionChanged)="onGridBoxOptionChanged($event)">
+      <div *dxTemplate="let data of 'content'">
+        <dx-data-grid [dataSource]="selectDataSource" [columns]="gridColumns" [hoverStateEnabled]="true"
+          [selection]="{ mode: 'multiple' }" [(selectedRowKeys)]="selectedValues" height="100%">
+          <dxo-selection mode="single"></dxo-selection>
+          <dxo-filter-row [visible]="true"></dxo-filter-row>
+          <dxo-scrolling mode="virtual"></dxo-scrolling>
+          <dxo-paging [enabled]="true" [pageSize]="10"></dxo-paging>
+        </dx-data-grid>
+      </div>
+
+    </dx-drop-down-box>
+  </div>
+  <div class="field" *ngIf="data.length != 0 ">
+    <label class="fieldlabel">Day: </label>
+  <dx-date-box  (onValueChanged)="onDateChange($event)" [value]="date" type="date" displayFormat="dd.MM.yyy. 'Day: {{selectedDay?.day}}'"
+    [disabledDates]="disableDates"> </dx-date-box>
+  </div>
+</div>
+<figure id="bar"></figure>

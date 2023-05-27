@@ -1,8 +1,6 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
-import data from "../../assets/data.json"
+import { ChangeDetectorRef, Component, Input, OnInit, ViewChild } from '@angular/core';
 import * as d3 from 'd3';
 import { DayLoss } from '../model/DayLoss';
-import { DxDataGridComponent } from 'devextreme-angular';
 
 @Component({
   selector: 'app-line-chart',
@@ -10,97 +8,61 @@ import { DxDataGridComponent } from 'devextreme-angular';
   styleUrls: ['./line-chart.component.scss']
 })
 export class LineChartComponent implements OnInit {
-  @ViewChild(DxDataGridComponent, { static: false }) dataGrid!: DxDataGridComponent;
+  @Input()
+  data: DayLoss[] = []
 
   constructor(private ref: ChangeDetectorRef) {
-    this.data = data.map(s => new DayLoss(s))
-    this.data = this.data.sort((a, b) => a.day - b.day)
+    this.searchDataSource = [{ id: "aircraft", name: "Aircrafts" },
+    { id: "helicopter", name: "Helicopters" },
+    { id: "tank", name: "Tanks" },
+    { id: "APC", name: "APCs" },
+    { id: "fieldArtillery", name: "Field Artillery" },
+    { id: "MRL", name: "MRLs" },
+    { id: "drone", name: "Drones" },
+    { id: "antiAircraftWarfare", name: "Anti aircraft warfares" }];
+
+    this.filterDataSource = [{ id: 1, name: "First month", date: new Date(2022, 2, 25) },
+    { id: 2, name: "First 3 months", date: new Date(2022, 4, 25) },
+    { id: 3, name: "First 6 months", date: new Date(2022, 7, 25) },
+    { id: 4, name: "First year", date: new Date(2023, 1, 25) },
+    { id: 5, name: "Untill now", date: new Date() }];
+
+    this.selectedEqupment = [this.searchDataSource[0]];
+    this.selectedTimePeriod = [this.filterDataSource[1]];
+  }
+
+  ngOnInit(): void {
     this.datacopy = Object.assign(this.data)
+    this.filterByTimePeriod()
+    this.createSvg();
+    this.drawChart();
   }
 
+  private datacopy: DayLoss[] = []
 
-  private data: DayLoss[]
-  private datacopy: DayLoss[]
-
-  showDots: boolean | null | undefined = true;
-
-  gridBoxValue: any[] = [{ id: "aircraft", name: "Aircrafts" }];
-
-  isGridBoxOpened: boolean = false;
+  public searchDataSource;
+  public filterDataSource;
+  public selectedTimePeriod;
+  public selectedEqupment;
 
 
+  public showDots: boolean | null | undefined = true;
 
-  isFilterGridBoxOpened: boolean = false;
+  public isEquipmentDropdownOpen: boolean = false;
+  public isTimePeriodDropdownOpen: boolean = false;
+  public gridColumns: any = ['name'];
 
-  gridColumns: any = ['name'];
-  x!: d3.ScaleLinear<number, number, never>
-  y!: d3.ScaleLinear<number, number, never>
-
-  searchData = [{ id: "aircraft", name: "Aircrafts" },
-  { id: "helicopter", name: "Helicopters" },
-  { id: "tank", name: "Tanks" },
-  { id: "APC", name: "APCs" },
-  { id: "fieldArtillery", name: "Field Artillery" },
-  { id: "MRL", name: "MRLs" },
-  { id: "drone", name: "Drones" },
-  { id: "antiAircraftWarfare", name: "Anti aircraft warfares" }]
-
-  filterData = [{ id: 1, name: "First month", date: new Date(2022, 2, 25) },
-  { id: 2, name: "First 3 months", date: new Date(2022, 4, 25) },
-  { id: 3, name: "First 6 months", date: new Date(2022, 7, 25) },
-  { id: 4, name: "First year", date: new Date(2023, 1, 25) },
-  { id: 5, name: "Untill now", date: new Date() }]
-
-  filterGridBoxValue: any[] = [this.filterData[1]];
-
-  gridBox_displayExpr(item: any) {
-    return item && `${item.name}`;
-  }
-
-  onGridBoxOptionChanged(e: any) {
-
-    if (e.name === 'value') {
-      this.isGridBoxOpened = false;
-
-      this.ref.detectChanges();
-      const svgElement = d3.select("figure#bar svg");
-      svgElement.remove()
-      this.createSvg()
-      this.drawChart()
-    }
-  }
-  onFilterGridBoxOptionChanged(e: any) {
-
-    if (e.name === 'value') {
-      this.isFilterGridBoxOpened = false;
-
-      this.ref.detectChanges();
-      this.dataFilter()
-      const svgElement = d3.select("figure#bar svg");
-      svgElement.remove()
-      this.createSvg()
-      this.drawChart()
-    }
-  }
-  onValueChanged() {
-    if (this.showDots) {
-      this.drawDots()
-    } else {
-      const svgElement = d3.selectAll("circle");
-      svgElement.remove()
-    }
-  }
-
-
+  private x!: d3.ScaleLinear<number, number, never>
+  private y!: d3.ScaleLinear<number, number, never>
   private svg: any;
   private margin = 50;
   private width = 1000 - (this.margin * 2);
   private height = 600 - (this.margin * 2);
 
   private createSvg(): void {
-    this.svg = d3.select("figure#bar")
+    this.svg = d3.select("figure#line")
       .append("svg")
-      .attr("width", this.width + 200 + (this.margin* 2))
+      .attr("width", this.width + 200 + (this.margin * 2))
       .attr("height", this.height + 100 + (this.margin * 2))
       .append("g")
       .attr("transform", "translate(" + this.margin + "," + this.margin + ")");
@@ -110,7 +72,8 @@ export class LineChartComponent implements OnInit {
     this.x = d3.scaleLinear()
       .domain([d3.min(this.data, (d) => d.day)!, d3.max(this.data, (d) => d.day)!])
       .range([0, this.width]);
-    const x = this.svg.append("g")
+
+    this.svg.append("g")
       .attr("transform", "translate(0," + this.height + ")")
       .call(this.data.length > 60 ? d3.axisBottom(this.x).tickFormat(d3.format("d")) : d3.axisBottom(this.x).ticks(this.data.length))
       .style("color", "#F8F5E4")
@@ -125,10 +88,10 @@ export class LineChartComponent implements OnInit {
       .text("Days");
 
     this.y = d3.scaleLinear()
-      .domain([0, d3.max(this.data, (d) => d[`${this.gridBoxValue[0].id as keyof DayLoss}`])!])
+      .domain([0, d3.max(this.data, (d) => d[`${this.selectedEqupment[0].id as keyof DayLoss}`])!])
       .range([this.height, 0]);
 
-    const y = this.svg.append("g")
+    this.svg.append("g")
       .call(d3.axisLeft(this.y))
       .style("color", "#F8F5E4")
       .selectAll("path")
@@ -136,7 +99,7 @@ export class LineChartComponent implements OnInit {
 
     this.svg.append("text")
       .attr("transform", "rotate(-90)")
-      .attr("x", -this.height / 2)
+      .attr("x", - this.height / 2)
       .attr("y", -35)
       .attr("fill", "#F8F5E4")
       .attr("text-anchor", "middle")
@@ -144,7 +107,7 @@ export class LineChartComponent implements OnInit {
 
     const line = d3.line()
       .x((d: any) => this.x(d.day))
-      .y((d: any) => this.y(d[`${this.gridBoxValue[0].id as keyof DayLoss}`]));
+      .y((d: any) => this.y(d[`${this.selectedEqupment[0].id as keyof DayLoss}`]));
 
     const path = this.svg.append("path")
       .datum(this.data)
@@ -158,6 +121,7 @@ export class LineChartComponent implements OnInit {
       this.drawDots()
 
     const totalLength = path.node().getTotalLength();
+
     path.attr("d", line)
       .attr("stroke-dasharray", function () {
         return totalLength + " " + totalLength;
@@ -168,9 +132,8 @@ export class LineChartComponent implements OnInit {
       .transition()
       .duration(1500)
       .attr("stroke-dashoffset", 0);
-
-
   }
+
   drawDots() {
     const dots = this.svg.append('g');
 
@@ -179,7 +142,7 @@ export class LineChartComponent implements OnInit {
       .enter()
       .append("circle")
       .attr("cx", (d: any) => this.x(d.day))
-      .attr("cy", (d: any) => this.y(d[`${this.gridBoxValue[0].id as keyof DayLoss}`]))
+      .attr("cy", (d: any) => this.y(d[`${this.selectedEqupment[0].id as keyof DayLoss}`]))
       .attr("r", 4)
       .style("fill", "#F8F5E4")
       .on("mouseover", (event: any, d: any) => {
@@ -188,7 +151,7 @@ export class LineChartComponent implements OnInit {
 
         const box = this.svg.append("rect")
           .attr("x", this.x(d.day))
-          .attr("y", this.y(d[`${this.gridBoxValue[0].id as keyof DayLoss}`]) + 23)
+          .attr("y", this.y(d[`${this.selectedEqupment[0].id as keyof DayLoss}`]) + 23)
           .attr("width", 140)
           .attr("height", 110)
           .attr("fill", "white")
@@ -209,7 +172,7 @@ export class LineChartComponent implements OnInit {
           .attr("class", "hover-text")
           .text("Date: " + this.formatDate(d.date))
           .attr("x", this.x(d.day) + 10)
-          .attr("y", this.y(d[`${this.gridBoxValue[0].id as keyof DayLoss}`]) + 50).style("opacity", 0)
+          .attr("y", this.y(d[`${this.selectedEqupment[0].id as keyof DayLoss}`]) + 50).style("opacity", 0)
           .transition()
           .duration(200)
           .style("opacity", 1);
@@ -218,29 +181,28 @@ export class LineChartComponent implements OnInit {
           .attr("class", "hover-text")
           .text("Day: " + d.day)
           .attr("x", this.x(d.day) + 10)
-          .attr("y", this.y(d[`${this.gridBoxValue[0].id as keyof DayLoss}`]) + 70).style("opacity", 0)
+          .attr("y", this.y(d[`${this.selectedEqupment[0].id as keyof DayLoss}`]) + 70).style("opacity", 0)
           .transition()
           .duration(200)
           .style("opacity", 1);
 
         this.svg.append("text")
           .attr("class", "hover-text")
-          .text("Loss per day: " + d[`${this.gridBoxValue[0].id + "PD" as keyof DayLoss}`])
+          .text("Loss per day: " + d[`${this.selectedEqupment[0].id + "PD" as keyof DayLoss}`])
           .attr("x", this.x(d.day) + 10)
-          .attr("y", this.y(d[`${this.gridBoxValue[0].id as keyof DayLoss}`]) + 90).style("opacity", 0)
+          .attr("y", this.y(d[`${this.selectedEqupment[0].id as keyof DayLoss}`]) + 90).style("opacity", 0)
           .transition()
           .duration(200)
           .style("opacity", 1);
         this.svg.append("text")
           .attr("class", "hover-text")
-          .text("Total loss: " + d[`${this.gridBoxValue[0].id as keyof DayLoss}`])
+          .text("Total loss: " + d[`${this.selectedEqupment[0].id as keyof DayLoss}`])
           .attr("x", this.x(d.day) + 10)
-          .attr("y", this.y(d[`${this.gridBoxValue[0].id as keyof DayLoss}`]) + 110)
+          .attr("y", this.y(d[`${this.selectedEqupment[0].id as keyof DayLoss}`]) + 110)
           .style("opacity", 0)
           .transition()
           .duration(200)
           .style("opacity", 1);
-
       })
       .on("mouseout", (event: any) => {
         d3.select(event.currentTarget)
@@ -255,20 +217,47 @@ export class LineChartComponent implements OnInit {
       .attr("r", 4);
   }
 
+  onEquipmentOptionChange(e: any) {
+    if (e.name === 'value') {
+      this.isEquipmentDropdownOpen = false;
+
+      this.ref.detectChanges();
+      const svgElement = d3.select("figure#line svg");
+      svgElement.remove()
+      this.createSvg()
+      this.drawChart()
+    }
+  }
+
+  onTimePeriodOptionChanged(e: any) {
+    if (e.name === 'value') {
+      this.isTimePeriodDropdownOpen = false;
+      this.ref.detectChanges();
+      this.filterByTimePeriod()
+
+      const svgElement = d3.select("figure#line svg");
+      svgElement.remove()
+      this.createSvg()
+      this.drawChart()
+    }
+  }
+
+  toggleShowDots() {
+    if (this.showDots) {
+      this.drawDots()
+    } else {
+      const svgElement = d3.selectAll("circle");
+      svgElement.remove()
+    }
+  }
+
   private formatDate(date: any) {
     let parsedDate = date as Date
 
-    return [parsedDate.getDate(), parsedDate.getMonth(), parsedDate.getFullYear()].join('.')
+    return [parsedDate.getDate(), parsedDate.getMonth() + 1, parsedDate.getFullYear()].join('.')
   }
 
-  dataFilter() {
-    this.data = this.datacopy.filter(s => s.date.getTime() < this.filterGridBoxValue[0].date.getTime())
+  filterByTimePeriod() {
+    this.data = this.datacopy.filter(s => s.date.getTime() < this.selectedTimePeriod[0].date.getTime())
   }
-
-  ngOnInit(): void {
-    this.dataFilter()
-    this.createSvg();
-    this.drawChart();
-  }
-
 }

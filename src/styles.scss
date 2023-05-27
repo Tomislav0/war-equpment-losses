@@ -1,6 +1,43 @@
 /* You can add global styles to this file, and also import other style files */
-body{
+body {
   background-color: #539165;
-  font-family: "Helvetica Neue","Segoe UI",helvetica,verdana,sans-serif;
+  font-family: "Helvetica Neue", "Segoe UI", helvetica, verdana, sans-serif;
   text-align: center;
+  // background-image: url("https://purepng.com/public/uploads/large/purepng.com-military-helicopterflighttransportweaponwarmilitaryarmyhelicopterflyingforcenavy-981525064573y7ikz.png");
+  background-size: 30%;
+  background-position: right 100px;
+  background-repeat: no-repeat;
+}
+
+.fieldlabel {
+  width: fit-content;
+  color: white;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+}
+
+.dropd {
+  display: flex;
+  margin: 0 auto;
+  align-items: center;
+  width: fit-content;
+  gap: 10px
+}
+
+.chartTitle {
+  color: white;
+  text-align: center;
+  text-shadow: 2px 2px black;
+}
+
+.dropdd {
+  display: flex;
+  margin: 0 auto;
+  align-items: center;
+  width: fit-content;
 }
