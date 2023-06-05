@@ -103,7 +103,6 @@ export class BarChartComponent implements OnInit {
       .enter()
       .append("rect")
       .attr("x", (d: any) => x(d.name))
-      .attr("y", (d: any) => this.height)
       .attr("width", x.bandwidth())
       .attr("height", 0)
       .attr("fill", "#F7C04A")
